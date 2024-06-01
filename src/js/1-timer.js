@@ -5,6 +5,8 @@ import "izitoast/dist/css/iziToast.min.css";
 
 
 const startBtn = document.querySelector('#startBtn');
+const inputDate = document.querySelector('#datetime-picker')
+inputDate.disabled = false;
 
 function convertMs(ms) {
   // Number of milliseconds per unit of time
@@ -25,10 +27,9 @@ function convertMs(ms) {
   return { days, hours, minutes, seconds };
 }
 
- // {days: 0, hours: 0, minutes: 0, seconds: 2}
-// console.log(convertMs(140000)); // {days: 0, hours: 0, minutes: 2, seconds: 20}
-// console.log(convertMs(24140000)); // {days: 0, hours: 6 minutes: 42, seconds: 20}
-
+function addZero (num){
+  return num.toString().padStart(2,'0');
+}
 
 const onClose = (selectedDates)=> {
   console.log(selectedDates[0]);
@@ -37,24 +38,25 @@ const onClose = (selectedDates)=> {
   {
     startBtn.disabled = false;
     let timer = selectedDates[0].getTime() - newDate;
-    
-    
     const span = document.querySelectorAll('.value');
     
-startBtn.addEventListener('click', () =>{
-  setInterval(() => {
+  startBtn.addEventListener('click', () =>{
+  startBtn.disabled = true;
+  inputDate.disabled = true;
+  const intervalId = setInterval(() => {
     const time = convertMs(timer);
+    if (timer <= 0){
+      clearInterval(intervalId);
+    }
+    else {
     timer -= 1000;
-    span[0].textContent = time.days;
-  span[1].textContent = time.hours;
-  span[2].textContent = time.minutes;
-  span[3].textContent = time.seconds;
-
+    const arrTime = Object.values(time);
+    for (let i=0; i<= arrTime.length - 1; i++){
+      span[i].textContent = addZero(arrTime[i]);
+    }
+  }
   }, 1000)
 })
-    
-
-  
   }
 else {
   iziToast.error({
